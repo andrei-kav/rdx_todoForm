@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Form, FormGroup, Input } from 'reactstrap';
 
 import { saveValue, removeValue, waitUploading } from "../../itemAddFormReducer";
-import { fetchItems, requestIsFetching } from "../../todoItemsReducer";
+import { fetchItems, requestIsFetching, hideCompleted, showCompleted, startUpdating } from "../../todoItemsReducer";
 import todoListService from "../../services/todoListService";
 import './itemAddForm.css';
 
@@ -16,29 +16,26 @@ class ItemAddForm extends Component {
     };
     onSubmit = (e) => {
         e.preventDefault();
-        if (this.props.text) {
-            this.props.waitUploading(true);
-            this.todoListService.uploadItemToDB(this.props.text)
+        const { text, removeValue, waitUploading, requestIsFetching, startUpdating } = this.props;
+        if (text) {
+            waitUploading(true);
+            this.todoListService.uploadItemToDB(text)
                 .then(() => {
-                    this.props.waitUploading(false);
-                    this.props.removeValue();
-                    this.props.requestIsFetching(true)})
+                    waitUploading(false);
+                    removeValue();
+                    requestIsFetching(true);
+                    startUpdating()})
                 .catch(err => {
-                    this.props.waitUploading(false);
+                    waitUploading(false);
                     console.error(err);
                 })
         } else {
             alert('The form is empty. Write a todo post');
         }
     };
-    onHideCompleted = (e) => {
-        e.preventDefault();
-        let elements = this.props.todoList.map(item => !item.actual ? { ...item, hidden: true} : item);
-        this.props.fetchItems(elements);
-    };
 
     render() {
-
+        const { text, isUploading, hideCompleted, showCompleted } = this.props;
         return (
             <Form className="item-add-form"
                   onSubmit={this.onSubmit}>
@@ -48,16 +45,23 @@ class ItemAddForm extends Component {
                            placeholder="Enter a new todo item"
                            plaintext
                            onChange={this.onValueChange}
-                           value={this.props.text}/>
+                           value={text}/>
                 </FormGroup>
-                <div className="d-flex justify-content-center">
+                <div className="d-flex justify-content-around">
                     <button type="button"
                             className="btn"
-                            onClick={this.onHideCompleted}
-                            disabled={this.props.isUploading}>Hide completed</button>
+                            onClick={hideCompleted}
+                            disabled={isUploading}>Hide completed
+                    </button>
+                    <button type="button"
+                            className="btn"
+                            onClick={showCompleted}
+                            disabled={isUploading}>Show completed
+                    </button>
                     <button type="submit"
                             className="btn"
-                            disabled={this.props.isUploading}>Add new</button>
+                            disabled={isUploading}>Add new
+                    </button>
                 </div>
             </Form>
         )
@@ -73,4 +77,4 @@ const mapStateToProps = (state) => {
     }
 };
 
-export default connect(mapStateToProps, { saveValue, removeValue, waitUploading, fetchItems, requestIsFetching })(ItemAddForm);
+export default connect(mapStateToProps, { saveValue, removeValue, waitUploading, fetchItems, requestIsFetching, hideCompleted, showCompleted, startUpdating })(ItemAddForm);

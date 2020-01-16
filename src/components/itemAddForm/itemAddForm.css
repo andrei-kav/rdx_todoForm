@@ -2,19 +2,20 @@
     outline:none;
     font-size: 18px;
     line-height: 21px;
+    color: slategrey;
     border-bottom: 1px solid slategrey !Important;
-    transition: border-color 0.15s ease-in-out;
+    transition: border-color 0.15s ease-in-out, color 0.15s ease-in-out;
 }
 .item-add-form input:focus {
     border-bottom: 1px solid #000000 !Important;
+    color: #000000;
 }
 .item-add-form button {
     border-radius: 8px;
     font-weight: 300;
     line-height: 19px;
-    width: 134px;
+    width: 135px;
     padding: 10px;
-    margin: 0 60px;
     background: #FFFFFF;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
 }

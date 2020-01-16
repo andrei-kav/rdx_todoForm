@@ -1,12 +1,14 @@
 const FETCH_ITEMS_FROM_DB = 'FETCH ITEMS FROM DB';
 const MAKE_ITEM_NOT_ACTUAL = 'MAKE ITEM NOT ACTUAL';
-const REQUEST_IS_FETCHING = 'REQUEST IS WAITING';
-// const SHIT_HAPPENS = 'SHIT HAPPENS';
+const REQUEST_IS_FETCHING = 'REQUEST IS FETCHING';
+const HIDE_COMPLETED_POSTS = 'HIDE COMPLETED POSTS';
+const SHOW_COMPLETED_POSTS = 'SHOW COMPLETED POSTS';
+const START_COMPONENT_UPDATING = 'START COMPONENT UPDATING';
 
 const initialState = {
     todoList: [],
     isFetching: true,
-    error: false
+    isUpdating: false,
 };
 
 const todoItemsReducer = (state = initialState, action) => {
@@ -26,8 +28,15 @@ const todoItemsReducer = (state = initialState, action) => {
             return stateCopy;
         case REQUEST_IS_FETCHING:
             return { ...state, isFetching: action.isFetching };
-        // case SHIT_HAPPENS:
-        //     return { ...state, error: action.error };
+        case HIDE_COMPLETED_POSTS:
+            stateCopy.todoList = [...state.todoList].map(item => !item.actual ? { ...item, hidden: true} : item);
+            return stateCopy;
+        case SHOW_COMPLETED_POSTS:
+            stateCopy.todoList = [...state.todoList].map(item => ({ ...item, hidden: false}));
+            return stateCopy;
+        case START_COMPONENT_UPDATING:
+            stateCopy.isUpdating = !stateCopy.isUpdating;
+            return stateCopy;
         default:
             return stateCopy;
     }
@@ -38,4 +47,6 @@ export default todoItemsReducer;
 export const fetchItems = (items) => ({ type: FETCH_ITEMS_FROM_DB, items });
 export const makeNotActual = (id) => ({ type: MAKE_ITEM_NOT_ACTUAL, id });
 export const requestIsFetching = (isFetching) => ({ type: REQUEST_IS_FETCHING, isFetching });
-// export const shitHappens = (error) => ({ type: TOGGLE_IS_WAITING, error });
+export const hideCompleted = () => ({ type: HIDE_COMPLETED_POSTS });
+export const showCompleted = () => ({ type: SHOW_COMPLETED_POSTS });
+export const startUpdating = (isUpdating) => ({ type: START_COMPONENT_UPDATING, isUpdating });
