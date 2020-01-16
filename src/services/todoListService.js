@@ -25,18 +25,10 @@ export default class TodoListService {
         const data = await this.getResource(this._apiBase);
         return data.map(this._transformData);
     };
-    changePropValue = async (id, prop) => {
-        const data = await this.getResource(this._apiBase);
-        const index = data.findIndex(elem => elem.id === id);
-        // const newItem =
+    uploadItemToDB = async (label) => {
+        const item = {label, actual: true};
+        await this.getResource(this._apiBase, {...this._POST, body: JSON.stringify(item)})
     };
-    // uploadValueToBD = async (value) => {
-    //     const data = await this.getResource(this._apiBase);
-    //     const saved = value.toString();
-    //     this._checkValueInData(data, saved)
-    //         ? console.error(`"${saved}" is already in the list`)
-    //         : await this.getResource(this._apiBase, {...this._POST, body: JSON.stringify({ saved })})
-    // }
     _transformData = (item) => ({
         label: item.label,
         actual: item.actual,

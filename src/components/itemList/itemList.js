@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import TodoItem from "../todoItem";
-import { fetchItems, makeNotActual, toggleIsWaiting, shitHappens } from "../../todoItemsReducer";
+import { fetchItems, makeNotActual, requestIsFetching } from "../../todoItemsReducer";
 import Spinner from "../spinner";
 import todoListService from "../../services/todoListService";
 
@@ -10,35 +10,39 @@ class ItemList extends Component {
 
     todoListService = new todoListService();
 
+    noActual = 'there is no actual posts';
+
     componentDidMount() {
         this.todoListService.getData()
             .then(itemList => {
-                this.props.toggleIsWaiting(false);
+                this.props.requestIsFetching(false);
                 this.props.fetchItems(itemList);
             })
             .catch(err => {
-                this.props.toggleIsWaiting(false);
+                this.props.requestIsFetching(false);
                 console.error(err)
             });
     }
+    componentDidUpdate(prevProps) {
+        if (this.props.isFetching !== prevProps.isFetching) this.componentDidMount();
+    }
 
     renderItems = (items) => {
-        return items
-            ? items.map((item) => {
-                const { id, ...props } = item;
+        return items.filter(item => !item.hidden).map((item) => {
+                const { id, hidden, ...props } = item;
+                const objProps = {...props, id, makeNotActual: this.props.makeNotActual};
                 return (
-                    <li key={id} onClick={() => this.props.makeNotActual(id)} >
-                        <TodoItem {...props} />
+                    <li key={id} hidden={hidden}>
+                        <TodoItem {...objProps} />
                     </li>
                 )
-            })
-            : null;
+            });
     };
 
     render() {
-        const { todoList, isWaiting } = this.props;
-        const elements = todoList.length ? this.renderItems(todoList) : 'no data';
-        const content = isWaiting ? <Spinner /> : <ul>{elements}</ul>;
+        const { todoList, isFetching } = this.props;
+        let elements = todoList.length ? this.renderItems(todoList) : 'no data';
+        const content = isFetching ? <Spinner /> : <ul>{elements.length ? elements : this.noActual}</ul>;
 
         return (
             <>
@@ -54,7 +58,7 @@ const mapStateToProps = (state) => {
     const todoItems = state.todoItems;
     return {
         todoList: [...todoItems.todoList],
-        isWaiting: todoItems.isWaiting
+        isFetching: todoItems.isFetching
     }
 };
-export default connect(mapStateToProps, { fetchItems, toggleIsWaiting, shitHappens, makeNotActual })(ItemList);
+export default connect(mapStateToProps, { fetchItems, requestIsFetching, makeNotActual })(ItemList);

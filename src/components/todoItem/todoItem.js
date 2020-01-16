@@ -4,14 +4,13 @@ import './todoItem.css';
 
 const TodoItem = (props) => {
 
-    const { label, actual } = props;
-    let classNames = 'li-item';
-    classNames = !actual
-        ? classNames += ' not-actual'
-        : classNames;
+    const {id, label, actual, makeNotActual } = props;
+    const classNames = !actual
+        ? 'li-item not-actual'
+        : 'li-item';
     return (
         <div className={classNames}>
-            {label}
+            <span onClick={() => makeNotActual(id)}>{label}</span>
         </div>
     )
 };

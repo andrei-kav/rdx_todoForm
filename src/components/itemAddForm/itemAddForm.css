@@ -21,3 +21,7 @@
 .item-add-form button:hover {
     background: #FFE482;
 }
+.btn:disabled:hover {
+    cursor: default;
+    background: #FFFFFF;
+}

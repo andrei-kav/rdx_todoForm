@@ -4,6 +4,16 @@
       "label": "react redux",
       "actual": true,
       "id": 1
+    },
+    {
+      "label": "next todo",
+      "actual": true,
+      "id": 2
+    },
+    {
+      "label": "new task",
+      "actual": true,
+      "id": 3
     }
   ]
 }
