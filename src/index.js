@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore, combineReducers } from 'redux';
-import 'bootstrap/dist/css/bootstrap.css';
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
+import thunkMiddleware from "redux-thunk";
+
+import 'bootstrap/dist/css/bootstrap.css';
 
 import './index.css';
 import App from './components/app/App';
@@ -13,7 +15,9 @@ const reducers = combineReducers({
     todoItems: todoItemsReducer,
     itemAddForm: itemAddFormReducer
 });
-const store = createStore(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+const store = createStore(reducers, compose(
+    applyMiddleware(thunkMiddleware), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+));
 
 ReactDOM.render(
     <Provider store={store}>

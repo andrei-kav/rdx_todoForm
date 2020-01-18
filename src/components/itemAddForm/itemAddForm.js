@@ -2,36 +2,22 @@ import React, { Component } from "react";
 import { connect } from 'react-redux';
 import { Form, FormGroup, Input } from 'reactstrap';
 
-import { saveValue, removeValue, waitUploading } from "../../itemAddFormReducer";
-import { fetchItems, requestIsFetching, hideCompleted, showCompleted, startUpdating } from "../../todoItemsReducer";
-import todoListService from "../../services/todoListService";
+import { saveValue, uploadItemData } from "../../itemAddFormReducer";
+import { hideCompleted, showCompleted } from "../../todoItemsReducer";
+
 import './itemAddForm.css';
 
 class ItemAddForm extends Component {
-
-    todoListService = new todoListService();
 
     onValueChange = (e) => {
         this.props.saveValue(e.target.value);
     };
     onSubmit = (e) => {
         e.preventDefault();
-        const { text, removeValue, waitUploading, requestIsFetching, startUpdating } = this.props;
-        if (text) {
-            waitUploading(true);
-            this.todoListService.uploadItemToDB(text)
-                .then(() => {
-                    waitUploading(false);
-                    removeValue();
-                    requestIsFetching(true);
-                    startUpdating()})
-                .catch(err => {
-                    waitUploading(false);
-                    console.error(err);
-                })
-        } else {
-            alert('The form is empty. Write a todo post');
-        }
+        const { text, uploadItemData } = this.props;
+        text
+            ? uploadItemData(text)
+            : alert('The form is empty. Write a todo post');
     };
 
     render() {
@@ -77,4 +63,4 @@ const mapStateToProps = (state) => {
     }
 };
 
-export default connect(mapStateToProps, { saveValue, removeValue, waitUploading, fetchItems, requestIsFetching, hideCompleted, showCompleted, startUpdating })(ItemAddForm);
+export default connect(mapStateToProps, { saveValue, uploadItemData, hideCompleted, showCompleted })(ItemAddForm);
