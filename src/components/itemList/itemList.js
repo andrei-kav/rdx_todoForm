@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import TodoItem from "../todoItem";
 import { requestIsFetching, fetchData, toggleItemActualData } from "../../todoItemsReducer";
+import { toggleComponentUpdating } from "../../itemAddFormReducer";
 import Spinner from "../spinner";
 
 class ItemList extends Component {
@@ -10,13 +11,13 @@ class ItemList extends Component {
     noActual = 'there is no actual posts';
 
     componentDidMount() {
-        // this.props.requestIsFetching(true);
         this.props.fetchData();
     }
-    componentDidUpdate(prevProps) {
-        const { isUpdating, fetchData } = this.props;
-        if (isUpdating !== prevProps.isUpdating) {
+    componentDidUpdate() {
+        const { isUpdating, fetchData, toggleComponentUpdating } = this.props;
+        if (isUpdating === true) {
             fetchData();
+            toggleComponentUpdating(false);
         }
     }
     renderItems = (items) => {
@@ -56,4 +57,4 @@ const mapStateToProps = (state) => {
         isUpdating: state.itemAddForm.isUpdatingTodoList
     }
 };
-export default connect(mapStateToProps, { requestIsFetching, fetchData, toggleItemActualData })(ItemList);
+export default connect(mapStateToProps, { requestIsFetching, fetchData, toggleItemActualData, toggleComponentUpdating })(ItemList);
