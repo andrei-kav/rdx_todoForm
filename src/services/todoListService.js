@@ -1,36 +1,31 @@
+import firebase from "../config";
+
 export default class TodoListService {
     constructor() {
-        this._apiBase = 'http://localhost:3001/data/';
+        this._apiBase = firebase.firestore().collection('todoPosts');
     }
-    _setMethod = (method) => ({
-        method: method,
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8'
-        }
-    });
 
-    _getResource = async (url, options) => {
-        const res = await fetch(url, options);
-        if (!res.ok) {
-            throw {
-                status: res.status,
-                // status: 345,
-                text: new Error(`Could not fetch ${url}, received ${res.status}`)
-            };
-        }
-        return await res.json();
+    getData = () => {
+        return this._apiBase.get()
+            .then((res) => {
+                return res.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+            })
+            .catch(err => console.error(err));
     };
 
-    getData = async () => {
-        return await this._getResource(this._apiBase);
+    toggleActualProp = (id, label, actual) => {
+        return this._apiBase.doc(id).set({ label, actual })
+            .then(() => console.log(`post "${label}" successfully updated`))
+            .catch(err => console.error(err));
     };
-    uploadItemToDB = async (label) => {
-        const item = {label, actual: true};
-        await this._getResource(this._apiBase, {...this._setMethod('POST'), body: JSON.stringify(item)})
-    };
-    toggleActualProp = async (id, label, actual) => {
-        const item = { label, actual };
-        await this._getResource(this._apiBase + id, {...this._setMethod('PUT'), body: JSON.stringify(item)})
+
+    uploadItemToDB = (label) => {
+        return this._apiBase.add({label, actual: true})
+            .then(() => console.log(`post "${label}" was added to db`))
+            .catch(err => console.error(err));
     };
 }
 
