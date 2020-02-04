@@ -9,7 +9,9 @@ const TodoItem = (props) => {
         ? 'li-item not-actual'
         : 'li-item';
     return (
-        <div className={classNames}>
+        <div onSelect={(e) => e.preventDefault()}
+             onMouseDown={(e) => e.preventDefault()}
+             className={classNames} >
             <span onClick={() => {
                     toggleItemActualData(id, label, !actual);
                 }}>{label }</span>

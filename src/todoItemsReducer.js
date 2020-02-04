@@ -65,4 +65,3 @@ export const toggleItemActualData = (...args) => (dispatch) => {
     todoService.toggleActualProp(...args)
         .catch(err => console.error(err));
 };
-
